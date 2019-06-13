@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>移动端视频适配</title>
+</head>
+<style>
+    .main {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #btnPlay {
+        position: fixed;
+        width: 20%;
+        left: 40%;
+        top: 70%;
+    }
+
+    #btn {
+        position: fixed;
+        width: 20%;
+        left: 40%;
+        top: 70%;
+        z-index: 1;
+        background-color: #fff;
+    }
+    #tip {
+        font-size: 20px;
+        color: black;
+        font-weight: 600;
+        position: fixed;
+        left: 10%;
+        top: 30%;
+        background-color: #fff;
+        width: 80%;
+        display: none;
+        z-index: 1;
+    }
+</style>
+
+<body>
+    <div class="main" id="videoBox">
+        <button  id="btn">点击按键</butto>
+            <div  id="tip">解决播放视频时不同设备的卡顿问题</br>同层播放器功能</br>非全屏播放，可操作菜单栏</br>安卓苹果可自动播放视频</div>
+    </div>
+</body>
+<script src="./lib/vconsole.min.js"></script>
+<script>
+    new VConsole();
+</script>
+<script src="./lib/jsmpeg.min.js"></script>
+<script src="./lib/video.js"></script>
+<script>
+
+    /* 使用WeixinJSBridge触发自动播放 */
+    function autoPlay(id) {
+        var audio = document.getElementById(id);
+        if (window.WeixinJSBridge) {
+            WeixinJSBridge.invoke(
+            "getNetworkType",
+            {},
+            function(e) {
+                audio.play();
+            },
+            false
+            );
+        } else {
+            document.addEventListener(
+            "WeixinJSBridgeReady",
+            function() {
+                WeixinJSBridge.invoke("getNetworkType", {}, function(e) {
+                audio.play();
+                });
+            },
+            false
+            );
+        }
+        audio.play();
+
+        return false;
+    }
+    window.onload = function () {
+        /* 实例化视频并且预加载 */
+        videoName = new Video("./lib/index.mp4", {
+        });
+        videoName.load()
+
+        /* 插入到文档中 */
+        document.getElementById("videoBox").append(videoName.domElement)
+
+        /* 使用WeixinJSBridge触发自动播放 */
+        autoPlay("video");
+
+        /* 暂时插件解决的问题 */
+        document.getElementById("btn").addEventListener("click", function () {
+            var tip = document.getElementById('tip');
+            tip.style.display = "block";
+            var timer = setTimeout(function () {
+                tip.style.display = "none";
+                clearTimeout(timer);
+            }, 5000)
+        }, false)
+
+    }
+</script>
+
+</html>
