@@ -32,6 +32,14 @@
         z-index: 1;
         background-color: #fff;
     }
+    #play-btn {
+        position: fixed;
+        width: 20%;
+        left: 40%;
+        top: 60%;
+        z-index: 1;
+        background-color: #fff;
+    }
     #tip {
         font-size: 20px;
         color: black;
@@ -49,7 +57,8 @@
 <body>
     <div class="main" id="videoBox">
         <button  id="btn">点击按键</butto>
-            <div  id="tip">解决播放视频时不同设备的卡顿问题</br>同层播放器功能</br>非全屏播放，可操作菜单栏</br>安卓苹果可自动播放视频</div>
+        <button  id="play-btn">播放</butto>
+        <div  id="tip">解决播放视频时不同设备的卡顿问题</br>同层播放器功能</br>非全屏播放，可操作菜单栏</br>安卓苹果可自动播放视频</div>
     </div>
 </body>
 <script src="./lib/vconsole.min.js"></script>
@@ -59,10 +68,13 @@
 <script src="./lib/jsmpeg.min.js"></script>
 <script src="./lib/video.js"></script>
 <script>
-
+var videoName ;
     /* 使用WeixinJSBridge触发自动播放 */
     function autoPlay(id) {
         var audio = document.getElementById(id);
+        if(document.getElementById('video').tagName === 'CANVAS'){
+            audio=videoName
+        }
         if (window.WeixinJSBridge) {
             WeixinJSBridge.invoke(
             "getNetworkType",
@@ -109,6 +121,12 @@
             }, 5000)
         }, false)
 
+         /* 暂时插件解决的问题 */
+         document.getElementById("play-btn").addEventListener("click", function () {
+            autoPlay("video");
+
+        }, false)
+        
     }
 </script>
 
